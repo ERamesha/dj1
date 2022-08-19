@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!Doctype html>
+<html lang="en">
+
+<head>
+<style>
+input[type=text] {
+    font-size: 20px;
+    width: 200px;
+    height: 20px;
+}
+</style>
+    <meta charset="UTF-8">
+    <meta name='view port' content="width=device-width, intial-scale=1.0">
+    <meta http-equiv="X-UA-Compatable" content="ie=edge">
+    <title>TIMING TECHNOLOGIES</title>
+</head>
+<body>
+<center>
+<h1> TIMING TECHNOLOGIES </h1>
+<form action="POST" method="post">
+        {% csrf_token %}
+        {{form}}
+    <label>Roll No: </label>
+    <input type="text" name="Rollno" placeholder="Enter Rollno" required autocomplete="off"><br>
+    <h6>{{message}}</h6>
+    <input type="submit"><br>
+</form>
+</center>
+</body>
+{% endblock %}
+
+
+
+
+
+
