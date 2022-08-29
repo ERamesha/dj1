@@ -9,6 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js" 
     integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" 
     crossorigin="anonymous"></script>
+    
 
     <!--             Nitgen.js script              -->
     <script>
@@ -528,9 +529,18 @@
                         
     <form action="add1" id="ram" method="POST">
                         {% csrf_token %}
-                        <h2>Bib no:<input type="text" id="bibno" name="bibno" placeholder="Enter Bibno" required autocomplete="off"><br></h2>
+                        <h2>Bib no:<input type="text" id="bibno" name="bibno" placeholder="Enter Bibno" onChange="bibOnchange()" required autocomplete="off"><br></h2>
                         <h2>Chip1 :<input type="text" id="chip1" name="chip1" placeholder="Enter chip1" required autocomplete="off"><br></h2>
                         <h2>Chip2 :<input type="text" id="chip2" name="chip2" placeholder="Enter chip2" required autocomplete="off"><br></h2>
+                        <h4></h4>
+                        {% comment %} {% for message in messages %}
+                        <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+                            <strong>message</strong> {{message}}
+                            <button type="button" class="close" data-dismiss="alert" arial-label="close">
+                                <span arial hidden='true'>&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}  {% endcomment %}
                     
                 </tr>
             <td>
@@ -583,7 +593,9 @@
                         </tr>
                         <tr><td><h3><center><button type="submit" class='primary'>submit</button></center></h3></td></tr>
                         </table>
-                        <h5></h5>
+                        {{form}}
+                        <h3>{{message}}</h3>
+                        
                     </div>
                     <div class="fingerprintStorageDiv">
 						<table>
@@ -671,21 +683,23 @@
                 type:'POST',
                 url:'/add1',
                 data:{
+                    cachekiller: (new Date()).getTime(),
                     bibno:$('#bibno').val(),
                     chip1:$('#chip1').val(),
                     chip2:$('#chip2').val(),
                     data1:$('#data1').val(),
-                    imgFinger1:$('#imgFinger1')
+                    imgFinger1:$('#imgFinger1').val(),
                     imgFingerrti1:$('#imgFingerrti1').val(),
                     txtIsoImage:$('#txtIsoImage').val(),
                     txtIsoImagerti:$('#txtIsoImagerti').val(),
                     csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
                 },
                 success: function(data){
-                    $('h5').html(data);
+                    $('h4').html(data);
                     }
             });
         });
+
         
     </script>
             

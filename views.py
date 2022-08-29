@@ -1,4 +1,5 @@
 from ast import Str
+from email import message
 from smtpd import DebuggingServer
 from sre_constants import SUCCESS
 from tokenize import Name
@@ -11,11 +12,13 @@ from tkinter import Image
 from urllib.request import urlopen
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render,HttpResponseRedirect
 import urllib.parse
 urllib.parse.quote(':')
 '%3A'
 import random
+from django.contrib import messages
+#from django.core.exceptions import ObjectDoesNotExist
 
  
 
@@ -29,12 +32,15 @@ def home(request):
 def POST(request):
     global val
     val=request.POST.get('Rollno')
-    z = Result1.objects.get(pk=val)
-    print("========",z)
-    print("========",val)
-    
-    return render(request,'result2.html',{'result': z})
-
+    try:
+        z = Result1.objects.get(pk=val)
+        print("========",z)
+        print("========",val)
+        
+        return render(request,'result2.html',{'result': z})
+    except:
+        message='Entered Rollno '+str(val) +' does not exist in DB'
+        return render(request,'home.html',{"message":message})
 def add1(request):
                     
     if request.method == 'POST':
@@ -53,9 +59,6 @@ def add1(request):
         dtf.bib_r1=Result1.bib_r1
         dtf.chipno_1_R1=Result1.chipno_1_R1
         dtf.chipno_1_R2=Result1.chipno_1_R2
-        dtf.save()
-        
-        
         DebuggingServer
         # y = request.POST.get("demo")
         y = request.POST.get("data1")
@@ -65,12 +68,55 @@ def add1(request):
         t = request.POST.get("txtIsoImage")
         p = request.POST.get("txtIsoImagerti")
         number1 = random.randint(1000,9999)
+        number2 = str(number1)
         print(number1)
-        img = Imagedata(rollno=x, imagedata=y,ltiimagedata=l,rtiimagedata=r,lti_iso=t,rti_iso=p,number=number1)
-        img.save()
+        if Result1.objects.filter(bib_r1=Result1.bib_r1).exists():
+            message='bibno is already exist'
+            
+            return HttpResponse(message)
+        else:
+            if dtf.chipno_1_R1==dtf.chipno_1_R2:
+                        message='entered values of chipno 1 and chipno 2 is same'
+                        return HttpResponse(message)
+            
+            else:
+                if Result1.objects.filter(chipno_1_R1=Result1.chipno_1_R1).exists():
+                    message='chipno 1 is already exist'
+                    return HttpResponse(message)
+                
+                else:
+                    if Result1.objects.filter(chipno_1_R2=Result1.chipno_1_R2).exists():
+                        message='chipno 2 is already exist'
+                        return HttpResponse(message)
+                    else:
+                        if Result1.objects.filter(chipno_1_R2=Result1.chipno_1_R1).exists():
+                            message='entered chipno 1 is already exist in chipno 2 in DB'
+                            return HttpResponse(message)
+                        else:
+                            if Result1.objects.filter(chipno_1_R1=Result1.chipno_1_R2).exists():
+                                message='entered chipno 2 is already exist in chipno 1 in DB '
+                                return HttpResponse(message)
+                            else:
+                                dtf.save()
+                                img = Imagedata(rollno=x, imagedata=y,ltiimagedata=l,rtiimagedata=r,lti_iso=t,rti_iso=p,number=number1)
+                                img.save()
+                                
+                                return HttpResponse(str(val) +' unique id is '+ str(number1))                           
 
-        return HttpResponse(number1)                           #render(request, 'result2.html',{"message":"Candidate registered "} )
-    
-#def image_upload(request):
-   # return HttpResponse(success)                                          #return render(request, 'result2.html',{"message":"Candidate updated successfully"})
 
+
+
+
+
+
+
+
+
+#return redirect('result2.html')
+                
+            #return render(request, 'result2.html',{"message":'unique id is ' + number2})
+            
+            
+            #render(request, 'result2.html',{"message":"Candidate registered "} )
+         
+                                        #return render(request, 'result2.html',{"message":"Candidate updated successfully"})
